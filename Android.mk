@@ -40,15 +40,20 @@ BUSYBOX_CONFIG:=full
 LOCAL_SRC_FILES := $(BUSYBOX_SRC_FILES)
 LOCAL_C_INCLUDES := $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := $(BUSYBOX_CFLAGS)
+LOCAL_CFLAGS += \
+  -Dgetmntent=busybox_getmntent \
+  -Dgetmntent_r=busybox_getmntent_r
 LOCAL_MODULE := busybox
-LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
-LOCAL_STATIC_LIBRARIES += libclearsilverregex
+LOCAL_FORCE_STATIC_EXECUTABLE := true
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
+LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
+LOCAL_STATIC_LIBRARIES += libc libclearsilverregex libm
 include $(BUILD_EXECUTABLE)
 
 BUSYBOX_LINKS := $(shell cat $(LOCAL_PATH)/busybox-$(BUSYBOX_CONFIG).links)
 # nc is provided by external/netcat
 exclude := nc
-SYMLINKS := $(addprefix $(TARGET_OUT_OPTIONAL_EXECUTABLES)/,$(filter-out $(exclude),$(notdir $(BUSYBOX_LINKS))))
+SYMLINKS := $(addprefix $(TARGET_ROOT_OUT_SBIN)/,$(filter-out $(exclude),$(notdir $(BUSYBOX_LINKS))))
 $(SYMLINKS): BUSYBOX_BINARY := $(LOCAL_MODULE)
 $(SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Symlink: $@ -> $(BUSYBOX_BINARY)"
