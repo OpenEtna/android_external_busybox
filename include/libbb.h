@@ -1603,9 +1603,9 @@ extern const char bb_default_login_shell[];
 #  define SC_FORMAT "/dev/ttyS%d"
 #endif
 # define VC_FORMAT "/dev/tty%d"
-# define LOOP_FORMAT "/dev/loop%d"
-# define LOOP_NAMESIZE (sizeof("/dev/loop") + sizeof(int)*3 + 1)
-# define LOOP_NAME "/dev/loop"
+# define LOOP_FORMAT "/dev/block/loop%d"
+# define LOOP_NAMESIZE (sizeof("/dev/block/loop") + sizeof(int)*3 + 1)
+# define LOOP_NAME "/dev/block/loop"
 # define FB_0 "/dev/fb0"
 #endif
 
