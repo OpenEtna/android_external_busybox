@@ -54,15 +54,16 @@ BUSYBOX_LINKS := $(shell cat $(LOCAL_PATH)/busybox-$(BUSYBOX_CONFIG).links)
 # nc is provided by external/netcat
 exclude := nc
 SYMLINKS := $(addprefix $(TARGET_ROOT_OUT_SBIN)/,$(filter-out $(exclude),$(notdir $(BUSYBOX_LINKS))))
+#Add a compatibility symlink in /system/xbin/busybox
+SYMLINKS += $(TARGET_OUT)/xbin/busybox
 $(SYMLINKS): BUSYBOX_BINARY := $(LOCAL_MODULE)
 $(SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Symlink: $@ -> $(BUSYBOX_BINARY)"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf $(BUSYBOX_BINARY) $@
+	$(hide) ln -sf /sbin/$(BUSYBOX_BINARY) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(SYMLINKS)
-
 # We need this so that the installed files could be picked up based on the
 # local module name
 ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
