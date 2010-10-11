@@ -60,7 +60,14 @@ include $(BUILD_EXECUTABLE)
 file = $(TARGET_ROOT_OUT_SBIN)/busybox
 $(file) : $(TARGET_OUT_OPTIONAL_EXECUTABLES)/busybox | $(ACP)
 	$(transform-prebuilt-to-target)
-ALL_PREBUILT += $(file)
+symlink_sh := $(TARGET_ROOT_OUT_SBIN)/sh
+
+$(symlink_sh): $(file)
+	@echo "Symlink: $@ -> $(BUSYBOX_BINARY)"
+	@mkdir -p $(dir $@)
+	@rm -rf $@
+	$(hide) ln -sf busybox $@
+ALL_PREBUILT += $(file) $(symlink_sh)
 
 BUSYBOX_LINKS := $(shell cat $(LOCAL_PATH)/busybox-$(BUSYBOX_CONFIG).links)
 # nc is provided by external/netcat
