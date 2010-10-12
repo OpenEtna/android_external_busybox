@@ -52,22 +52,32 @@ BUSYBOX_CONFIG:=full
 LOCAL_SRC_FILES := $(BUSYBOX_SRC_FILES)
 LOCAL_C_INCLUDES := $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := $(BUSYBOX_CFLAGS)
+LOCAL_CFLAGS += \
+  -Dgetusershell=busybox_getusershell \
+  -Dsetusershell=busybox_setusershell \
+  -Dendusershell=busybox_endusershell \
+  -Dttyname_r=busybox_ttyname_r \
+  -Dgetmntent=busybox_getmntent \
+  -Dgetmntent_r=busybox_getmntent_r
 LOCAL_MODULE := busybox
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
-LOCAL_STATIC_LIBRARIES += libclearsilverregex
+LOCAL_STATIC_LIBRARIES += libclearsilverregex libcutils libc libm
+LOCAL_FORCE_STATIC_EXECUTABLE := true
 include $(BUILD_EXECUTABLE)
 
 file = $(TARGET_ROOT_OUT_SBIN)/busybox
 $(file) : $(TARGET_OUT_OPTIONAL_EXECUTABLES)/busybox | $(ACP)
 	$(transform-prebuilt-to-target)
-symlink_sh := $(TARGET_ROOT_OUT_SBIN)/sh
+ALL_PREBUILT += $(file)
 
+symlink_sh := $(TARGET_ROOT_OUT_SBIN)/sh
 $(symlink_sh): $(file)
 	@echo "Symlink: $@ -> $(BUSYBOX_BINARY)"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
 	$(hide) ln -sf busybox $@
-ALL_PREBUILT += $(file) $(symlink_sh)
+
+ALL_PREBUILT += $(symlink_sh)
 
 BUSYBOX_LINKS := $(shell cat $(LOCAL_PATH)/busybox-$(BUSYBOX_CONFIG).links)
 # nc is provided by external/netcat
